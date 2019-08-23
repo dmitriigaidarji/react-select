@@ -1,10 +1,11 @@
 {
   "name": "@dmitriig/react-select",
   "description": "ReactJS multi select dropdown",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "Dmitrii Gaidarji",
   "license": "MIT",
   "private": false,
+  "main": "build/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/dmitriigaidarji/react-select.git"
@@ -32,7 +33,6 @@
     "webpack-cli": "^3.3.7"
   },
   "dependencies": {
-    "@dmitriig/react-select": "^0.1.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-virtualized": "^9.21.1"
