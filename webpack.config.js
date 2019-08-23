@@ -3,20 +3,13 @@ module.exports = {
     "./src/index.ts"
   ],
   output: {
-    filename: "bundle.js",
-    chunkFilename: '[name].bundle.js',
+    filename: "index.js",
     path: __dirname + "/build"
   },
   plugins: [
     // new CopyWebpackPlugin(['name.ico']),
     // new BundleAnalyzerPlugin()
   ],
-  optimization: {
-    splitChunks: {
-      chunks: 'all'
-    },
-    runtimeChunk: false
-  },
   resolve: {
     // Add '.ts' and '.tsx' as resolvable extensions.
     extensions: [".ts", ".tsx", ".js", ".json"]
@@ -78,7 +71,23 @@ module.exports = {
       }
     ]
   },
-  stats: 'minimal',
+  externals: {
+    react: {
+      root: 'React',
+      commonjs2: 'react',
+      commonjs: 'react',
+      amd: 'react',
+      umd: 'react',
+    },
+    'react-dom': {
+      root: 'ReactDOM',
+      commonjs2: 'react-dom',
+      commonjs: 'react-dom',
+      amd: 'react-dom',
+      umd: 'react-dom',
+    },
+    'react-virtualized': 'react-virtualized'
+  },
   // externals: function (context, request, callback) {
   //   console.log(request);
   //   callback();

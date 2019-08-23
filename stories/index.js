@@ -36,7 +36,8 @@ storiesOf('ReactSelect', module)
     <div style={{
       position: 'absolute',
       bottom: '20px',
-      left: '20px'
+      left: '20px',
+      width: '300px'
     }}>
       <ReactSelect options={options} placeholder="Select something.."
                  onChange={action('changed')}/>

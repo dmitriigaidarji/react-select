@@ -1,8 +1,8 @@
 import * as React from "react"
 import {List} from 'react-virtualized'
-import _ from 'lodash'
 import './ReactSelect.scss';
 import CloseIcon from "./CloseIcon";
+import {debounce} from "./helpers";
 
 interface IItem {
   value: number,
@@ -33,6 +33,8 @@ interface IState {
   isLoading: boolean,
   listRowHeight: number
 }
+
+const maxRows = 10;
 
 class ReactSelect extends React.Component <IProps, IState> {
   static defaultProps = {
@@ -71,7 +73,7 @@ class ReactSelect extends React.Component <IProps, IState> {
       listRowHeight: props.listRowHeight ? props.listRowHeight : 24
     };
 
-    this.debouncedResize = _.debounce(this.onResize.bind(this), 200);
+    this.debouncedResize = debounce(this.onResize.bind(this), 200);
     this.handleClickOutside = this.handleClickOutside.bind(this);
     this.onInputFocus = this.onInputFocus.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -298,12 +300,10 @@ class ReactSelect extends React.Component <IProps, IState> {
     const {placeholder, style, listStyle, inputStyle} = this.props;
     const showList = isFocused && listItems.length > 0;
     const showInfo = isFocused && (isLoading || (listItems.length === 0 && query.length > 0));
-    const maxRows = 10;
     let listHeight = maxRows * listRowHeight;
     if (listItems.length < maxRows) {
       listHeight = listItems.length * listRowHeight;
     }
-    console.log(listItems)
     return (
       <div className="react-select-container" ref={this.containerRef} style={style ? style : {}}>
         <div className="react-select-wrapper" ref={this.wrapperRef} onClick={this.onWrapperClick} tabIndex={-1}>
