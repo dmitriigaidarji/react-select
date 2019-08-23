@@ -128,8 +128,6 @@ export class ReactSelect extends React.Component <IReactSelectProps, IState> {
     if (listRowHeight == null) {
       const font = ReactSelect.css(this.containerRef.current, 'font');
       const fontSizeRes = /\S+px/.exec(font);
-      console.log('font', font, fontSizeRes);
-
       if (fontSizeRes) {
         const fontSizeValue = Math.max(12, parseInt(fontSizeRes[0]) * 1.2);
         this.setState({listRowHeight: fontSizeValue})
@@ -306,7 +304,6 @@ export class ReactSelect extends React.Component <IReactSelectProps, IState> {
     if (listItems.length < maxRows) {
       listHeight = listItems.length * listRowHeight;
     }
-    console.log(listRowHeight);
     return (
       <div className="react-select-container" ref={this.containerRef} style={style ? style : {}}>
         <div className="react-select-wrapper" ref={this.wrapperRef} onClick={this.onWrapperClick} tabIndex={-1}>
