@@ -2,14 +2,6 @@ import React from 'react';
 import ReactSelect from '../src/ReactSelect'
 import {storiesOf} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
-// import {linkTo} from '@storybook/addon-links';
-// storiesOf('Button', module)
-//   .add('with text', () => (
-//     <Button>Hello Button</Button>
-// ))
-// .add('with emoji', () => (
-//   <Button><span role="img" aria-label="so cool">😀 😎 👍 💯</span></Button>
-// ));
 
 
 const options = [];

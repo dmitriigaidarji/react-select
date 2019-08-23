@@ -37,15 +37,12 @@
     "webpack-node-externals": "^1.7.2"
   },
   "peerDependencies": {
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-virtualized": "^9.21.1"
+    "react": "^16.8.6"
   },
   "dependencies": {
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-virtualized": "^9.21.1",
-    "solar-popup": "^0.5.1"
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "react-virtualized": "^9.21.1"
   },
   "scripts": {
     "build": "webpack --config webpack.prod.config.js --progress",

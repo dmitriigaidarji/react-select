@@ -1,10 +1,14 @@
+// const nodeExternals = require('webpack-node-externals');
+
 module.exports = {
   entry: [
     "./src/index.ts"
   ],
   output: {
-    filename: "index.js",
-    path: __dirname + "/build"
+    path: __dirname + "/build",
+    filename: 'index.js',
+    // library: 'ReactSelect',
+    libraryTarget: 'commonjs2'
   },
   plugins: [
     // new CopyWebpackPlugin(['name.ico']),
@@ -22,29 +26,35 @@ module.exports = {
         test: /\.(ts|tsx)?$/,
         use: [
           {
-            loader: "awesome-typescript-loader", options: {
-              transpileOnly: false,
-              // "useBabel": true,
-              // "babelOptions": {
-              //   "babelrc": false, /* Important line */
-              //   "compact": true,
-              //   "presets": [
-              //     ["@babel/preset-env",
-              //       {
-              //         "targets": {
-              //           "browsers": [
-              //             "IE >= 10"]
-              //         },
-              //         "modules": false,
-              //         "useBuiltIns": "entry",
-              //         "corejs": 3
-              //       }
-              //     ]
-              //   ],
-              //   "plugins": ["@babel/plugin-syntax-dynamic-import"]
-              // },
-              // "babelCore": "@babel/core", // needed for Babel v7
-            }
+            loader: "awesome-typescript-loader",
+            // options: {
+            //   transpileOnly: false,
+            //   "useBabel": true,
+            //   "babelOptions": {
+            //     "babelrc": false, /* Important line */
+            //     "compact": true,
+            //     "presets": [
+            //       ["@babel/preset-env",
+            //         {
+            //           "targets": {
+            //             "browsers": [
+            //               "IE >= 10"]
+            //           },
+            //           "modules": false,
+            //           "useBuiltIns": "entry",
+            //           "corejs": 3
+            //         }
+            //       ]
+            //     ],
+            //     "plugins": [
+            //       "@babel/plugin-transform-runtime",
+            //       "@babel/plugin-syntax-dynamic-import",
+            //       "@babel/plugin-transform-modules-commonjs"
+            //     ],
+            //     "sourceType": "unambiguous"
+            //   },
+            //   "babelCore": "@babel/core", // needed for Babel v7
+            // }
           }
         ]
       },
@@ -72,22 +82,27 @@ module.exports = {
     ]
   },
   externals: {
-    react: {
-      root: 'React',
-      commonjs2: 'react',
-      commonjs: 'react',
-      amd: 'react',
-      umd: 'react',
-    },
-    'react-dom': {
-      root: 'ReactDOM',
-      commonjs2: 'react-dom',
-      commonjs: 'react-dom',
-      amd: 'react-dom',
-      umd: 'react-dom',
-    },
-    'react-virtualized': 'react-virtualized'
-  },
+    'react': 'commonjs react',
+    'react-dom': 'commonjs react-dom',
+    'react-virtualized': 'commonjs react-virtualized'
+  }
+  // externals: {
+  //   react: {
+  //     root: 'React',
+  //     commonjs2: 'react',
+  //     commonjs: 'react',
+  //     amd: 'react',
+  //     umd: 'react',
+  //   },
+  //   'react-dom': {
+  //     root: 'ReactDOM',
+  //     commonjs2: 'react-dom',
+  //     commonjs: 'react-dom',
+  //     amd: 'react-dom',
+  //     umd: 'react-dom',
+  //   },
+  //   'react-virtualized': 'react-virtualized'
+  // },
   // externals: function (context, request, callback) {
   //   console.log(request);
   //   callback();

@@ -1,3 +1,2 @@
-import ReactSelect from "./ReactSelect"
-
-export default ReactSelect;
+import {ReactSelect, IReactSelectProps} from "./ReactSelect";
+export default ReactSelect

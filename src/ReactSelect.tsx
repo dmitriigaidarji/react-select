@@ -9,7 +9,7 @@ interface IItem {
   label: string
 }
 
-interface IProps {
+export interface IReactSelectProps{
   options: IItem[] | object,
   placeholder: string,
   onChange: (items: IItem[]) => void,
@@ -36,7 +36,7 @@ interface IState {
 
 const maxRows = 10;
 
-class ReactSelect extends React.Component <IProps, IState> {
+export class ReactSelect extends React.Component <IReactSelectProps, IState> {
   static defaultProps = {
     inputFontSize: 12,
     noResultsMessage: 'No results'
@@ -59,7 +59,7 @@ class ReactSelect extends React.Component <IProps, IState> {
   debouncedResize() {
   };
 
-  constructor(props: IProps) {
+  constructor(props: IReactSelectProps) {
     super(props);
     this.state = {
       listItems: [],
@@ -127,9 +127,11 @@ class ReactSelect extends React.Component <IProps, IState> {
     //Set row height
     if (listRowHeight == null) {
       const font = ReactSelect.css(this.containerRef.current, 'font');
-      const fontSizeRes = /\w+px/.exec(font);
+      const fontSizeRes = /\S+px/.exec(font);
+      console.log('font', font, fontSizeRes);
+
       if (fontSizeRes) {
-        const fontSizeValue = parseInt(fontSizeRes[0]) * 1.2;
+        const fontSizeValue = Math.max(12, parseInt(fontSizeRes[0]) * 1.2);
         this.setState({listRowHeight: fontSizeValue})
       }
     }
@@ -259,9 +261,9 @@ class ReactSelect extends React.Component <IProps, IState> {
     const wrapper = this.wrapperRef.current;
     if (wrapper != null && test != null) {
       test.style.font = font;
-      if (!test.style.fontSize) {
-        test.style.fontSize = this.props.inputFontSize! + 1 + 'px'
-      }
+      // if (!test.style.fontSize) {
+      //   test.style.fontSize = this.props.inputFontSize! + 1 + 'px'
+      // }
       test.innerHTML = text;
       const height = (test.clientHeight + 2);
       const width = (test.clientWidth + 2);
@@ -304,6 +306,7 @@ class ReactSelect extends React.Component <IProps, IState> {
     if (listItems.length < maxRows) {
       listHeight = listItems.length * listRowHeight;
     }
+    console.log(listRowHeight);
     return (
       <div className="react-select-container" ref={this.containerRef} style={style ? style : {}}>
         <div className="react-select-wrapper" ref={this.wrapperRef} onClick={this.onWrapperClick} tabIndex={-1}>
