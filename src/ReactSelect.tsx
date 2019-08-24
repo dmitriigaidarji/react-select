@@ -3,14 +3,16 @@ import {List} from 'react-virtualized'
 import './ReactSelect.scss';
 import CloseIcon from "./CloseIcon";
 import {debounce} from "./helpers";
+import {KeyboardEventHandler} from "react";
+import Token from "./Token";
 
-interface IItem {
+export interface IItem {
   value: number,
   label: string
 }
 
-export interface IReactSelectProps{
-  options: IItem[] | object,
+export interface IReactSelectProps {
+  options: IItem[],
   placeholder: string,
   onChange: (items: IItem[]) => void,
   rowRenderer?: (item: any, index: number) => void,
@@ -20,11 +22,11 @@ export interface IReactSelectProps{
   listRowHeight?: number,
   inputFontSize?: number,
   noResultsMessage?: string
+  selection?: IItem[]
 }
 
 interface IState {
   listItems: any[],
-  options: any[],
   query: string,
   tokens: IItem[],
   inputWidth: number,
@@ -55,6 +57,7 @@ export class ReactSelect extends React.Component <IReactSelectProps, IState> {
   wrapperRef = React.createRef<HTMLDivElement>();
   textTestRef = React.createRef<HTMLDivElement>();
   listRef = React.createRef<HTMLDivElement>();
+  lastTokensLength: number = 0;
 
   debouncedResize() {
   };
@@ -63,16 +66,15 @@ export class ReactSelect extends React.Component <IReactSelectProps, IState> {
     super(props);
     this.state = {
       listItems: [],
-      options: [],
       query: '',
-      tokens: [],
+      tokens: this.props.selection ? this.props.selection : [],
       inputWidth: 20,
       listWidth: 100,
       isFocused: false,
       isLoading: false,
       listRowHeight: props.listRowHeight ? props.listRowHeight : 24
     };
-
+    this.lastTokensLength = this.state.tokens.length;
     this.debouncedResize = debounce(this.onResize.bind(this), 200);
     this.handleClickOutside = this.handleClickOutside.bind(this);
     this.onInputFocus = this.onInputFocus.bind(this);
@@ -91,39 +93,17 @@ export class ReactSelect extends React.Component <IReactSelectProps, IState> {
     window.removeEventListener('resize', this.debouncedResize);
   }
 
-  componentDidMount() {
-    const {placeholder, options, listRowHeight} = this.props;
-    const self = this;
-    // Load options
-    if (options instanceof Array) {
-      const newOptions = options.sort((a: IItem, b: IItem) => a.label > b.label ? 1 : -1);
-      this.setState({options: newOptions, listItems: newOptions.slice()})
-    } else if (options instanceof Promise) {
-      this.setState({isLoading: true});
-      options.then((data) => {
-        const {query} = self.state;
-        const newOptions = data.sort((a: IItem, b: IItem) => a.label > b.label ? 1 : -1);
-        if (query.length > 0) {
-          self.setState({
-            options: newOptions,
-            listItems: newOptions.filter((item: IItem) =>
-              item.label.toLowerCase().indexOf(query.toLowerCase()) !== -1
-            ),
-            isLoading: false
-          })
-        } else {
-          const newOptions = data.sort((a: IItem, b: IItem) => a.label > b.label ? 1 : -1);
-          self.setState({
-            options: newOptions,
-            listItems: newOptions.slice(),
-            isLoading: false
-          })
-        }
-      })
+  loadData = () => {
+    const {placeholder, options, listRowHeight, selection} = this.props;
+    if (selection) {
+      const selectionSet = new Set<string>(selection.map((it) => it.label));
+      // Load options
+      this.setState({
+        listItems: options.filter((item) => !selectionSet.has(item.label))
+      });
     } else {
-      throw Error('Options type is neither Array nor Promise. Expected [{value, label}]')
+      this.setState({listItems: options.sort((a: IItem, b: IItem) => a.label > b.label ? 1 : -1)})
     }
-
     //Set row height
     if (listRowHeight == null) {
       const font = ReactSelect.css(this.containerRef.current, 'font');
@@ -155,8 +135,29 @@ export class ReactSelect extends React.Component <IReactSelectProps, IState> {
       //   listContainer.style.left = offset.left;
       // }
     }
+  }
+
+  componentDidMount() {
     document.addEventListener('mousedown', this.handleClickOutside);
     window.addEventListener('resize', this.debouncedResize);
+    this.loadData();
+  }
+
+  componentDidUpdate(prevProps: Readonly<IReactSelectProps>, prevState: Readonly<IState>, snapshot?: any): void {
+    if (prevProps.options != this.props.options) {
+      this.loadData();
+    }
+    if (this.lastTokensLength !== this.state.tokens.length) {
+      const {options} = this.props;
+      const {tokens} = this.state;
+      const {value} = this.queryInput.current!;
+      this.lastTokensLength = this.state.tokens.length;
+      this.setState({
+        listItems: options.filter((item) =>
+          item.label.toLowerCase().indexOf(value.toLowerCase()) !== -1 && !tokens.some((token) => token.label === item.label)
+        )
+      })
+    }
   }
 
   onResize(event: any) {
@@ -195,8 +196,8 @@ export class ReactSelect extends React.Component <IReactSelectProps, IState> {
 
   handleInputChange(event: any) {
     const {value} = event.target;
-    const {options, tokens} = this.state;
-    const {placeholder} = this.props;
+    const {placeholder, options} = this.props;
+    const {tokens} = this.state;
     let width = 0;
     if (value.length > 0) {
       width = this.calculateTextSize(value).width;
@@ -210,6 +211,32 @@ export class ReactSelect extends React.Component <IReactSelectProps, IState> {
       ),
       inputWidth: width
     })
+  }
+
+  handleKeyPress: KeyboardEventHandler<HTMLInputElement> = (event) => {
+    // @ts-ignore
+    const {value} = event.target;
+    const {onChange} = this.props;
+    const {tokens} = this.state;
+    // enter
+    if (event.keyCode === 13 || event.which === 13) {
+      if (value.length === 0) {
+        alert('Text value can\'t be empty.')
+      } else {
+        const existent = tokens.find((t) => t.value === value);
+        if (existent) {
+          alert('Filter item already exists.')
+        } else {
+          tokens.push({
+            label: value,
+            value
+          });
+          this.lastTokensLength = tokens.length;
+          this.setState({query: '', tokens});
+          onChange(tokens);
+        }
+      }
+    }
   };
 
   addToken(index: number) {
@@ -217,17 +244,21 @@ export class ReactSelect extends React.Component <IReactSelectProps, IState> {
     const {onChange} = this.props;
     const item = listItems.splice(index, 1)[0];
     tokens.push(item);
-    this.setState({tokens: tokens, query: '', listItems: listItems});
-    if (onChange != null) {
-      onChange(tokens);
-    }
+    this.lastTokensLength = tokens.length;
+    this.setState({
+      tokens,
+      query: '',
+      listItems
+    });
+    onChange(tokens);
   };
 
-  removeToken(event: any) {
+  removeToken(item: IItem) {
     const {tokens, listItems, query} = this.state;
     const {onChange, placeholder} = this.props;
-    const index = parseInt(event.target.dataset.index);
-    const item = tokens.splice(index, 1)[0];
+    tokens.splice(tokens.findIndex((it) => it == item)!, 1);
+
+    // alphabetical insert
     let i = 0,
       flag = true;
     while (i < listItems.length && flag) {
@@ -241,15 +272,18 @@ export class ReactSelect extends React.Component <IReactSelectProps, IState> {
     if (flag) {
       listItems.push(item);
     }
+
     if (onChange) {
       onChange(tokens);
     }
+
     let inputWidth = 0;
     if (query.length > 0) {
       inputWidth = this.calculateTextSize(query).width;
     } else if (placeholder != null) {
       inputWidth = this.calculateTextSize(placeholder).width;
     }
+    this.lastTokensLength = tokens.length;
     this.setState({tokens, listItems, inputWidth})
   };
 
@@ -307,19 +341,17 @@ export class ReactSelect extends React.Component <IReactSelectProps, IState> {
     return (
       <div className="react-select-container" ref={this.containerRef} style={style ? style : {}}>
         <div className="react-select-wrapper" ref={this.wrapperRef} onClick={this.onWrapperClick} tabIndex={-1}>
-          {tokens.map((item, index) => <div key={index} data-index={index} className="react-select-token"
-                                            onClick={this.removeToken}>
-            {item.label}
-            <CloseIcon/>
-          </div>)}
-          <input value={query} onChange={this.handleInputChange} ref={this.queryInput}
+          {tokens.map((item, index) => <Token key={item.value} item={item} onClick={this.removeToken}/>)}
+          <input value={query} ref={this.queryInput}
                  style={inputStyle ? Object.assign({
                      width: `${inputWidth}px`,
                      fontSize: `${this.props.inputFontSize}px`
                    },
                    inputStyle
                  ) : {width: `${inputWidth}px`, fontSize: `${this.props.inputFontSize}px`}}
+                 onChange={this.handleInputChange}
                  onClick={ReactSelect.onInputClick}
+                 onKeyPress={this.handleKeyPress}
                  placeholder={tokens.length === 0 ? placeholder : undefined}/>
         </div>
         {showInfo &&

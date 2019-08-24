@@ -2,6 +2,7 @@ import React from 'react';
 import ReactSelect from '../src/ReactSelect'
 import {storiesOf} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
+import Controlled from "./Controlled";
 
 
 const options = [];
@@ -17,6 +18,9 @@ storiesOf('ReactSelect', module)
       <ReactSelect options={options} placeholder="Select something.."
                  onChange={action('changed')}/>
     </div>
+  })
+  .add('Controlled', () => {
+    return <Controlled options={options}/>
   })
   .add('Overflow', () => <div style={{padding: '20px'}}>
     <div style={{overflow: 'hidden', width: '400px', height: '150px', backgroundColor: '#e2f3ff'}}>
