@@ -351,7 +351,7 @@ export class ReactSelect extends React.Component <IReactSelectProps, IState> {
                  ) : {width: `${inputWidth}px`, fontSize: `${this.props.inputFontSize}px`}}
                  onChange={this.handleInputChange}
                  onClick={ReactSelect.onInputClick}
-                 onKeyPress={this.handleKeyPress}
+                 // onKeyPress={this.handleKeyPress}
                  placeholder={tokens.length === 0 ? placeholder : undefined}/>
         </div>
         {showInfo &&
