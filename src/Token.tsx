@@ -12,7 +12,7 @@ const Token = ({item, onClick}:
   }
 
   return <div key={item.value} className="react-select-token"
-              onClick={React.useCallback(handleClick, [item])}>
+              onClick={React.useCallback(handleClick, [item, onClick])}>
     {item.label}
     <CloseIcon/>
   </div>

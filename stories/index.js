@@ -28,17 +28,6 @@ storiesOf('ReactSelect', module)
                  onChange={action('changed')}/>
     </div>
   </div>)
-  .add('Bottom', () => <div style={{padding: '20px'}}>
-    <div style={{
-      position: 'absolute',
-      bottom: '20px',
-      left: '20px',
-      width: '300px'
-    }}>
-      <ReactSelect options={options} placeholder="Select something.."
-                 onChange={action('changed')}/>
-    </div>
-  </div>)
   // .add('Promise', () => {
   //   const resultPromise = new Promise((resolve, reject) => {
   //     setTimeout(() => resolve(options), 2000)

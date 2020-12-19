@@ -1,7 +1,6 @@
 import * as React from "react"
 import {List} from 'react-virtualized'
 import './ReactSelect.scss';
-import CloseIcon from "./CloseIcon";
 import {debounce} from "./helpers";
 import {KeyboardEventHandler} from "react";
 import Token from "./Token";
